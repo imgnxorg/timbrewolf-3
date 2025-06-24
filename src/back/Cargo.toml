@@ -1,0 +1,15 @@
+[package]
+name = "taku"
+version = "0.1.0"
+edition = "2021"
+build = "src/back/src/build.rs"
+
+[dependencies]
+wry = "0.51"
+winit = "0.30.11"
+tao = "0.33.0"
+# tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "taku"
+path = "main.rs"
