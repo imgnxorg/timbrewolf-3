@@ -1,0 +1,77 @@
+{
+  "name": "taku-wav-editor",
+  "description": "Waveform editor with CLI and GUI support.",
+  "version": "1.0.0",
+  "main": "src/backend/main.rs",
+  "scripts": {
+    "start": "cargo run",
+    "build": "taku/tasks/build.sh",
+    "deploy": "taku/tasks/deploy.sh"
+  },
+  "dependencies": {
+    "tailwindcss": "^2.2.19",
+    "postcss-cli": "^8.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss7-compat": "^2.2.19"
+  },
+  "assets": {
+    "images": ["assets/images/**/*"],
+    "fonts": ["assets/fonts/**/*"],
+    "stylesheets": ["assets/stylesheets/**/*"]
+  },
+  "hooks": {
+    "pre-commit": "taku/hooks/pre-commit",
+    "post-merge": "taku/hooks/post-merge"
+  },
+  "frontend": {
+    "entry": "src/frontend/input.css",
+    "style": "tailwind",
+    "routes": ["home", "edit", "export"]
+  },
+  "backend": {
+    "entry": "src/backend/main.rs",
+    "runtime": "tao-wry",
+    "bridge": "src/backend/ui.rs"
+  },
+  "cli": {
+    "entry": "src/cli/main.sh",
+    "commands": [
+      { "name": "reverse", "description": "Reverse the waveform" },
+      { "name": "speedup", "description": "Speed up audio (atempo)" },
+      { "name": "slowdown", "description": "Slow down audio (atempo)" },
+      { "name": "normalize", "description": "Normalize volume levels" },
+      { "name": "compress", "description": "Apply compression to audio" }
+    ]
+  },
+  "tasks": {
+    "build": "taku/tasks/build.sh",
+    "deploy": "taku/tasks/deploy.sh"
+  },
+  "entities": {
+    "AudioFile": {
+      "type": "strong",
+      "attributes": {
+        "id": { "type": "int", "primary": true },
+        "path": { "type": "string" },
+        "name": { "type": "string" },
+        "sampleRate": { "type": "int" },
+        "duration": { "type": "float" },
+        "channels": { "type": "int" }
+      }
+    },
+    "Transform": {
+      "type": "strong",
+      "attributes": {
+        "id": { "type": "int", "primary": true },
+        "fileId": {
+          "type": "int",
+          "relation": { "target": "AudioFile", "mandatory": true }
+        },
+        "type": { "type": "string" },
+        "parameters": { "type": "json", "optional": true },
+        "timestamp": { "type": "datetime", "default": "now" }
+      }
+    }
+  }
+}

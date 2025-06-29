@@ -17,7 +17,7 @@ PROJECT_NAME="taku-demo-app"
 DEMO_NAME="timbre-tool-demo"
 
 # ---- Create Project Structure ----
-echo "📁 Creating Taku project structure..."
+echo "📁 Creating $FRAMEWORK_NAME project structure..."
 mkdir -p $PROJECT_NAME/frontend/src
 mkdir -p $PROJECT_NAME/frontend/public
 mkdir -p $PROJECT_NAME/src
