@@ -1,0 +1,1 @@
+afplay /Users/donaldmoore/Library/Containers/com.moogmusic.animoogz/Data/Library/Caches/recorder.wav

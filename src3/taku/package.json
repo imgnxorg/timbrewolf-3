@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "description": "**A lightweight Electron alternative powered by GTK and Rust.**",
+  "name": "taku",
+  "scripts": {
+    "dev": "webpack-dev-server --mode=development --open",
+    "build": "yarn run test && yarn run build:docs && webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:docs": "if command -v pandoc >/dev/null 2>&1; then pandoc -s -t man docs/taku.md -o docs/taku.1 && echo \"Documentation built successfully.\"; else echo >&2 \"pandoc required but not installed. Aborting.\"; exit 1; fi",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write .",
+    "prettier": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "postinstall": "yarn run build",
+    "watch": "webpack --watch",
+    "serve": "webpack serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@radix-ui/colors": "^3.0.0",
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/react-router-dom": "^5.3.3",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "postcss": "^8.5.4",
+    "postcss-loader": "^8.1.1",
+    "react": "18",
+    "react-dom": "18",
+    "react-router-dom": "^7.6.2",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^4.1.8",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imgnx/taku.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imgnx/taku/issues"
+  },
+  "homepage": "https://github.com/imgnx/taku#readme"
+}

@@ -55,7 +55,7 @@ const config = {
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./frontend/src/"),
+      "@": path.resolve(__dirname, "./front/src/"),
     },
     extensions: [".jsx", ".js", ".tsx", ".ts", ".json"],
   },

@@ -13,6 +13,16 @@ const NavBar = () => {
             }`
           }
         >
+          🎤 Text-to-Speech
+        </NavLink>
+        <NavLink
+          to="/home"
+          className={({ isActive }) =>
+            `rounded-xl border border-3 border-white px-4 py-2 transition-colors ${
+              isActive ? "bg-cyan-700 text-white" : "bg-blue-500 text-white"
+            }`
+          }
+        >
           Home
         </NavLink>
         <NavLink

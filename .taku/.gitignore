@@ -1,0 +1,62 @@
+# ─────────────────────────────
+# Rust / Cargo
+# ─────────────────────────────
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# ─────────────────────────────
+# Build scripts / logs
+# ─────────────────────────────
+/build/
+/dist/
+/out/
+/pkg/
+/*.log
+
+# ─────────────────────────────
+# GTK / WebKit / Misc
+# ─────────────────────────────
+/webkitgtk/
+.gtk-*
+*.swp
+
+# ─────────────────────────────
+# Frontend (if you’re bundling static assets)
+# ─────────────────────────────
+/node_modules/
+/public/build/
+/public/dist/
+/public/assets/
+/frontend/dist/
+/frontend/node_modules/
+*.tsbuildinfo
+
+# ─────────────────────────────
+# Editor / OS junk
+# ─────────────────────────────
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+.vscode/
+.idea/
+*.iml
+
+# ─────────────────────────────
+# Environment / Secrets
+# ─────────────────────────────
+.env
+.env.*
+.secret
+*.key
+*.pem
+
+# ─────────────────────────────
+# Custom runtime or package cache
+# ─────────────────────────────
+/taku-runtime/
+.cache/
+
+database

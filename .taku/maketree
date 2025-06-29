@@ -1,0 +1,197 @@
+#!/bin/bash
+# shellcheck shell=bash
+
+# shellcheck source=/Users/donaldmoore/bin/imgnx
+source ~/bin/imgnx
+
+function MAIN_C787E6E4_1870_4616_9359_FF00839D248D() {
+  main "$@"
+}
+
+main() {
+  
+  dry_run=0
+  force=0
+  verbosity=0
+  file=""
+  use_interactive=0
+
+  log_info() { [[ $verbosity -ge 1 ]] && echo "[INFO] $*" >&2; }
+  log_debug() { [[ $verbosity -ge 2 ]] && echo "[DEBUG] $*" >&2; }
+  log_trace() { [[ $verbosity -ge 3 ]] && echo "[TRACE] $*" >&2; }
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+      print_help
+      return 0
+      ;;
+    -f | --force)
+      force=1
+      shift
+      ;;
+    -d | --dry-run)
+      dry_run=1
+      shift
+      ;;
+    -v)
+      ((verbosity++))
+      shift
+      ;;
+    -vv)
+      ((verbosity += 2))
+      shift
+      ;;
+    -vvv)
+      ((verbosity += 3))
+      shift
+      ;;
+    -i | --file)
+      file="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      return 1
+      ;;
+    esac
+  done
+
+  log_info "Verbosity level: $verbosity"
+
+  if [[ -n "$file" ]]; then
+    log_debug "Reading input from file: $file"
+    exec 3<"$file"
+  elif [ -t 0 ]; then
+    use_interactive=1
+  else
+    log_debug "Reading input from stdin"
+    exec 3<&0
+  fi
+
+  if [[ "$use_interactive" -eq 1 ]]; then
+    imgnx "%F{green}Please enter your %Stree structure%f%s."
+
+    imgnx "Tab: indent | Shift+Tab: dedent | Enter: save line | Ctrl+D: finish input"
+    interactive_editor >/tmp/.interactive.tree
+    exec 3</tmp/.interactive.tree
+  fi
+
+  while IFS= read -r line <&3; do
+    if [[ "$line" =~ ^[0-9]+\ directories?,?\ ?[0-9]*\ files?.*$ ]]; then
+      log_debug "Skipping summary/statistics line: $line"
+      continue
+    fi
+    log_trace "Raw input: $line"
+    indent="${line%%[^ ]*}"
+    base="${line##*── }"
+    [[ "$base" == "$line" ]] && base="${line##*/}"
+
+    path="$(echo "$indent" | sed 's/  /\//g')$base"
+    path="./${path##./}"
+
+    log_trace "Resolved path: $path"
+
+    if [[ "$line" == */ || "$base" == */ ]]; then
+      [[ -f "$path" && $force -eq 1 ]] && {
+        log_info "Removing conflicting file: $path"
+        [[ $dry_run -eq 1 ]] && echo "Would remove file: $path"
+        [[ $dry_run -eq 0 ]] && rm "$path"
+      }
+      [[ $dry_run -eq 1 ]] && echo "Would mkdir -p $path"
+      [[ $dry_run -eq 0 ]] && mkdir -p "$path"
+      log_debug "Created directory: $path"
+    else
+      parent=$(dirname "$path")
+      if [[ -f "$parent" && $force -eq 1 ]]; then
+        log_info "Replacing file with directory: $parent"
+        [[ $dry_run -eq 1 ]] && echo "Would remove file to create dir: $parent"
+        [[ $dry_run -eq 0 ]] && {
+          rm "$parent"
+          mkdir -p "$parent"
+        }
+      elif [[ ! -d "$parent" ]]; then
+        [[ $dry_run -eq 1 ]] && echo "Would mkdir -p $parent"
+        [[ $dry_run -eq 0 ]] && mkdir -p "$parent"
+      fi
+      [[ $dry_run -eq 1 ]] && echo "Would touch $path"
+      [[ $dry_run -eq 0 ]] && touch "$path"
+      log_debug "Created file: $path"
+    fi
+  done
+
+  exec 3<&-
+}
+
+interactive_editor() {
+  echo "Interactive mode: Tab to indent, Shift+Tab to dedent, Enter to save line, Ctrl+D to finish."
+  buffer=()
+  indent=0
+
+  while true; do
+    read -rsn1 key
+    case "$key" in
+    $'\x04') # Ctrl+D
+      break
+      ;;
+    $'\t') # Tab
+      ((indent++))
+      ;;
+    "") # Enter
+      read -pr "Line: " line
+      buffer+=("$(printf '  %.0s' $(seq 1 $indent))$line")
+      ;;
+    $'\e') # Escape sequence
+      read -rsn2 next
+      [[ "$next" == "[Z" ]] && ((indent > 0)) && ((indent--)) # Shift+Tab
+      ;;
+    esac
+  done
+
+  echo ""
+  echo "🌳 Done! What would you like to do?"
+  echo "1) Save to file"
+  echo "2) Print to stdout"
+  while true; do
+    read -rp "Enter choice [1-2]: " choice
+    case $choice in
+    1)
+      read -pr "Filename (.tree will be added): " fname
+      printf "%s\n" "${buffer[@]}" >"${fname}.tree"
+      echo "Saved to ${fname}.tree"
+      break
+      ;;
+    2)
+      printf "%s\n" "${buffer[@]}"
+      break
+      ;;
+    *)
+      echo "Invalid option. Please enter 1 or 2."
+      ;;
+    esac
+  done
+}
+
+print_help() {
+  cat <<EOF
+Usage: mktree [OPTIONS]
+
+Read a tree-like structure and create directories and files from it.
+
+If no input file or stdin is given, launches an interactive mode.
+
+Options:
+  -h, --help        Show this help message
+  -d, --dry-run     Show what would be done, but don't make changes
+  -f, --force       Remove conflicting files (clobbers files and directories)
+  -i, --file FILE   Read tree from a file instead of stdin
+  -v, -vv, -vvv     Increase verbosity level (up to 3x)
+
+Examples:
+  mktree < tree.txt
+  mktree --file structure.txt -vv
+  mktree               # Launches interactive editor
+EOF
+}
+
+MAIN_C787E6E4_1870_4616_9359_FF00839D248D "$@"

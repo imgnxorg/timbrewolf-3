@@ -9,9 +9,9 @@ const isProduction = process.env.NODE_ENV === "production";
 const stylesHandler = MiniCssExtractPlugin.loader;
 
 const config = {
-  entry: "./frontend/src/index.jsx",
+  entry: "./src/index.jsx",
   output: {
-    path: path.resolve(__dirname, "frontend", "dist"),
+    path: path.resolve(__dirname, "dist"),
   },
   devServer: {
     open: true,
@@ -20,7 +20,7 @@ const config = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "frontend/index.html",
+      template: "index.html",
     }),
 
     new MiniCssExtractPlugin(),
@@ -55,7 +55,7 @@ const config = {
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./frontend/src/"),
+      "@": path.resolve(__dirname, "./src/"),
     },
     extensions: [".jsx", ".js", ".tsx", ".ts", ".json"],
   },
